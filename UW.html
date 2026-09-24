@@ -1,0 +1,847 @@
+<!--
+  © 2026 Vivek Basal. All rights reserved.
+  Prepared by Vivek Basal. Not to be modified or redistributed without permission.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utility Cost Comparison</title>
+<style>
+  :root{
+    --indigo-900:#3c1361;
+    --indigo-800:#4c1d95;
+    --indigo-700:#5b21b6;
+    --purple-600:#7c3aed;
+    --purple-500:#8b5cf6;
+    --blue-50:#eff6ff;
+    --blue-100:#dbeafe;
+    --blue-500:#3b82f6;
+    --blue-600:#2563eb;
+    --pink-50:#faf5ff;
+    --pink-100:#f3e8ff;
+    --text-dark:#1e1b2e;
+    --text-muted:#6b7280;
+    --green-50:#ecfdf5;
+    --green-100:#d1fae5;
+    --green-600:#059669;
+    --green-700:#047857;
+    --red-600:#dc2626;
+    --border:#e5e7eb;
+    --white:#ffffff;
+    --shadow:0 2px 10px rgba(76,29,149,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:#f7f7fb;
+    color:var(--text-dark);
+    padding:20px;
+  }
+  .wrap{max-width:1440px;margin:0 auto;}
+
+  /* Header */
+  .header{
+    background:var(--white);
+    border-radius:14px;
+    padding:18px 26px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;
+    margin-bottom:18px;box-shadow:var(--shadow);border:1px solid var(--border);
+  }
+  .brand{display:flex;align-items:center;gap:22px;flex-wrap:wrap;}
+  .logo{display:flex;align-items:center;gap:8px;}
+  .logo svg{width:38px;height:38px;flex-shrink:0;}
+  .logo .logo-text{font-size:13px;font-weight:700;color:var(--indigo-800);line-height:1.15;}
+  .title-block h1{margin:0;font-size:23px;color:var(--indigo-800);letter-spacing:-0.3px;}
+  .title-block p{margin:2px 0 0;color:var(--text-muted);font-size:13px;}
+  .badges{display:flex;gap:22px;flex-wrap:wrap;}
+  .badge{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10.5px;color:var(--text-dark);font-weight:600;max-width:88px;text-align:center;}
+  .badge svg{width:22px;height:22px;flex-shrink:0;}
+
+  /* Panels row */
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:16px;align-items:start;}
+  @media (max-width:980px){.row{grid-template-columns:1fr;}}
+
+  .panel{border-radius:16px;padding:20px 22px;border:1px solid var(--border);}
+  .panel.blue{background:var(--blue-50);border-color:#d6e6fd;}
+  .panel.purple{background:var(--pink-50);border-color:#ecd9fb;}
+
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+  .panel-head-left{display:flex;align-items:center;gap:12px;}
+  .step-num{
+    width:32px;height:32px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;
+  }
+  .step-num.blue{background:var(--blue-500);}
+  .step-num.purple{background:var(--purple-600);}
+  .panel-head h2{margin:0;font-size:17px;color:var(--indigo-800);}
+  .panel-head p{margin:1px 0 0;font-size:12px;color:var(--text-muted);}
+  .panel-head .mini-logo{display:flex;align-items:center;gap:6px;}
+  .panel-head .mini-logo svg{width:26px;height:26px;}
+  .panel-head .mini-logo span{font-size:11px;font-weight:700;color:var(--indigo-800);line-height:1.1;}
+
+  .grid3{display:grid;grid-template-columns:1fr 1fr 90px;gap:12px;margin-bottom:12px;}
+  @media (max-width:640px){.grid3{grid-template-columns:1fr;}}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dark);margin-bottom:5px;}
+  label .req{color:var(--red-600);}
+  .txt-input, select.txt-input{
+    width:100%;padding:9px 11px;border:1.5px solid #d9d9e3;border-radius:9px;
+    font-size:13.5px;font-weight:600;color:var(--text-dark);background:var(--white);outline:none;
+  }
+  .txt-input:focus, select.txt-input:focus{border-color:var(--purple-500);}
+  .addr-wrap{position:relative;display:flex;align-items:center;}
+  .addr-wrap .txt-input{padding-right:34px;}
+  .pin-btn{
+    position:absolute;right:6px;width:24px;height:24px;border-radius:6px;border:none;
+    background:var(--indigo-700);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .pin-btn svg{width:14px;height:14px;}
+  .supplier-select{margin-bottom:16px;}
+  .tariff-select{margin-bottom:16px;}
+
+  .svc-list{display:flex;flex-direction:column;gap:10px;}
+  .svc-row{
+    background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 14px;
+    display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  }
+  .svc-row.disabled{opacity:.5;}
+  .svc-check{display:flex;align-items:center;gap:10px;flex:1 1 170px;min-width:150px;}
+  .svc-check input[type=checkbox]{
+    width:19px;height:19px;accent-color:var(--blue-600);cursor:pointer;flex-shrink:0;
+  }
+  .svc-icon{width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .svc-icon svg{width:22px;height:22px;}
+  .svc-check strong{font-size:14px;font-weight:700;}
+  .svc-fields{display:flex;gap:12px;flex-wrap:wrap;flex:2 1 260px;}
+  .fmini{min-width:110px;flex:1;}
+  .fmini label{font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;min-height:28px;display:flex;align-items:flex-end;}
+  .fmini input{width:100%;padding:8px 10px;border:1.5px solid #d9d9e3;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text-dark);outline:none;}
+  .fmini input:focus{border-color:var(--purple-500);}
+  .fmini input:disabled{background:#f3f3f6;color:#aaa;}
+
+  .bundle-row{background:var(--pink-100);border-color:#e3c9f7;}
+  .bundle-row.disabled{opacity:.5;}
+  .bundle-row .fmini{max-width:190px;flex:0 0 190px;}
+  .bundle-note{flex:1 1 160px;font-size:11.5px;color:var(--text-muted);align-self:center;line-height:1.4;}
+  .svc-row.bundled{opacity:.5;}
+
+  /* Benefits box */
+  .benefits{
+    margin-top:16px;background:var(--pink-100);border:1px solid #e3c9f7;border-radius:12px;padding:14px 16px;
+  }
+  .benefits-title{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--indigo-800);font-size:13.5px;margin-bottom:12px;}
+  .benefits-title svg{width:18px;height:18px;flex-shrink:0;}
+  .benefit-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+  .benefit-row:last-child{margin-bottom:0;}
+  .benefit-label{display:flex;align-items:center;gap:8px;flex:1 1 190px;font-size:13.5px;font-weight:600;color:var(--text-dark);}
+  .benefit-label svg{width:18px;height:18px;flex-shrink:0;}
+  .help{color:#a78bda;cursor:help;}
+  .benefit-input{display:flex;align-items:center;background:var(--white);border:1.5px solid #d9d9e3;border-radius:9px;padding:0 10px;flex:1 1 120px;max-width:150px;}
+  .benefit-input span{font-size:13px;color:var(--text-muted);font-weight:700;}
+  .benefit-input input{border:none;background:transparent;padding:8px 4px;font-size:13.5px;font-weight:600;width:100%;outline:none;}
+  .benefit-period{padding:8px 10px;border:1.5px solid #d9d9e3;border-radius:9px;background:var(--white);font-size:13px;font-weight:600;color:var(--text-dark);flex:1 1 110px;max-width:130px;}
+
+  /* Compare button row */
+  .compare-row{display:flex;align-items:center;justify-content:center;gap:14px;margin:6px 0 18px;}
+  .compare-row svg.deco{width:20px;height:20px;color:var(--purple-500);}
+  .compare-btn{
+    background:linear-gradient(120deg,var(--purple-600),var(--indigo-700));
+    color:#fff;border:none;border-radius:12px;padding:14px 34px;font-size:15px;font-weight:700;
+    display:flex;align-items:center;gap:10px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(91,33,182,0.35);transition:transform .12s ease,box-shadow .12s ease;
+  }
+  .compare-btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(91,33,182,0.42);}
+  .compare-btn svg{width:18px;height:18px;}
+  .reset-btn{
+    background:var(--white);color:var(--text-muted);border:1.5px solid #d9d9e3;border-radius:12px;
+    padding:12px 20px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;
+    transition:background .12s ease,border-color .12s ease,color .12s ease;
+  }
+  .reset-btn:hover{background:#f7f7fb;border-color:var(--purple-500);color:var(--indigo-800);}
+  .reset-btn svg{width:16px;height:16px;}
+
+  /* Results */
+  .results{background:var(--green-50);border:1px solid #b9ecd1;border-radius:16px;padding:22px 26px;}
+  .results-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+  .results-head-left{display:flex;align-items:flex-start;gap:12px;}
+  .results-head-left .icon-circle{
+    width:34px;height:34px;border-radius:9px;background:var(--indigo-800);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .results-head-left .icon-circle svg{width:19px;height:19px;color:#fff;}
+  .results-head h2{margin:0;font-size:19px;color:var(--indigo-800);}
+  .results-head p{margin:2px 0 0;font-size:13px;color:var(--text-muted);}
+  .save-pill{
+    background:var(--white);border:1.5px solid #86e0af;border-radius:12px;padding:10px 18px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .save-pill svg{width:26px;height:26px;color:#d4a017;flex-shrink:0;}
+  .save-pill strong{display:block;color:var(--green-700);font-size:14.5px;}
+  .save-pill span{display:block;color:var(--text-muted);font-size:12px;}
+
+  .results-body{display:grid;grid-template-columns:1.15fr 0.9fr 0.65fr;gap:20px;align-items:start;}
+  @media (max-width:1100px){.results-body{grid-template-columns:1fr;}}
+
+  .table-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--border);}
+  thead th{background:#f7f7fb;color:var(--text-muted);font-weight:700;font-size:11.5px;}
+  th.num,td.num{text-align:right;}
+  .svc-cell{display:flex;align-items:center;gap:9px;font-weight:600;}
+  .svc-cell svg{width:17px;height:17px;flex-shrink:0;}
+  tr.total-row td{font-weight:800;color:var(--green-700);background:var(--green-50);font-size:14px;border-bottom:none;}
+  td.diff{font-weight:700;}
+  td.diff.neg{color:var(--green-700);}
+  td.diff.pos{color:var(--red-600);}
+  td.diff.zero{color:var(--text-muted);}
+
+  .chart-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .chart-card h3{margin:0 0 10px;font-size:13.5px;color:var(--indigo-800);}
+  #chart{width:100%;height:auto;}
+
+  .side-col{display:flex;flex-direction:column;gap:14px;}
+  .saving-box{background:var(--green-100);border:1px solid #8fe0b5;border-radius:12px;padding:18px;text-align:left;}
+  .saving-box .bag{width:42px;height:42px;border-radius:50%;background:var(--green-600);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+  .saving-box .bag svg{width:22px;height:22px;color:#fff;}
+  .saving-box .label{font-size:13px;font-weight:700;color:var(--green-700);margin-bottom:2px;}
+  .saving-box .amount{font-size:34px;font-weight:800;color:var(--green-700);line-height:1.1;margin-bottom:6px;}
+  .saving-box .sub{font-size:12.5px;color:#1f7a4d;}
+
+  .tip-box{background:var(--blue-50);border:1px solid #bcdcfd;border-radius:12px;padding:16px;display:flex;gap:12px;}
+  .tip-box svg{width:22px;height:22px;color:var(--green-600);flex-shrink:0;}
+  .tip-box div{font-size:13px;color:var(--text-dark);line-height:1.7;font-weight:600;}
+  .page-copyright{text-align:center;font-size:11px;color:#9ca3af;margin-top:22px;padding-top:14px;border-top:1px solid var(--border);}
+
+  /* Print report */
+  .print-only{display:none;}
+  .p-header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #4c1d95;padding-bottom:6px;margin-bottom:8px;}
+  .p-logo{display:flex;align-items:center;gap:8px;}
+  .p-logo svg{width:26px;height:26px;}
+  .p-logo strong{display:block;font-size:14px;color:#4c1d95;}
+  .p-logo span{display:block;font-size:9.5px;color:#6b7280;}
+  .p-headright{text-align:right;}
+  .p-tariff{font-size:11px;font-weight:800;color:#fff;background:#7c3aed;border-radius:5px;padding:2px 9px;display:inline-block;margin-bottom:3px;}
+  .p-date{font-size:9.5px;color:#6b7280;}
+  .p-customer{font-size:11px;color:#1e1b2e;margin-bottom:8px;line-height:1.5;}
+  .p-customer strong{color:#4c1d95;}
+  #printSummary h3{font-size:12px;color:#4c1d95;margin:8px 0 4px;border-bottom:1px solid #e5e7eb;padding-bottom:3px;}
+  .p-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:2px;}
+  .p-table th,.p-table td{padding:3px 6px;text-align:left;border-bottom:1px solid #e5e7eb;}
+  .p-table th{background:#f7f7fb;font-weight:700;color:#374151;}
+  .p-table td.num,.p-table th.num{text-align:right;}
+  .p-table tr.p-total td{font-weight:800;background:#ecfdf5;}
+  .p-savings{margin-top:6px;padding:8px 14px;border:1.5px solid #059669;border-radius:8px;background:#ecfdf5;font-size:11.5px;color:#047857;font-weight:700;}
+  .p-chart{margin-top:8px;text-align:center;}
+  .p-chart svg{width:100%;max-width:230px;height:auto;}
+  .p-footer{margin-top:8px;font-size:8.5px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:5px;line-height:1.5;}
+
+  @media print{
+    @page{size:A4;margin:10mm;}
+    html, body{height:auto;padding:0;background:#fff;}
+    body > .wrap{display:none !important;}
+    .print-only{display:block !important;page-break-after:avoid;}
+    #printSummary *{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 40 40" fill="none"><path d="M6 22V8h4v14a6 6 0 0012 0V8h4v14a10 10 0 01-20 0z" fill="#7c3aed"/><path d="M24 8h4v14a10 10 0 01-8.5 9.9A9.98 9.98 0 0024 22V8z" fill="#c026d3"/></svg>
+        <div class="logo-text">Utility<br>Warehouse</div>
+      </div>
+      <div class="title-block">
+        <h1>Utility Cost Comparison</h1>
+        <p>Compare your current supplier with Utility Warehouse and see your potential savings</p>
+      </div>
+    </div>
+    <div class="badges">
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="#5b21b6" stroke-width="1.8"><path d="M12 2l8 4v5c0 5-3.4 8.4-8 11-4.6-2.6-8-6-8-11V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>FCA Regulated</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="#5b21b6"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6z"/></svg>UK Based</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="#5b21b6" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.6"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M14.5 14.7c2.6.3 4.5 2.3 4.5 5.3"/></svg>Trusted by 1M+ Members</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="#059669"><path d="M12 2C7 2 4 6 4 10c0 6 4 9 8 12 4-3 8-6 8-12 0-4-3-8-8-8z"/></svg>Simpler, Fairer, Greener</div>
+    </div>
+  </div>
+
+  <!-- Input panels -->
+  <div class="row">
+    <!-- Panel 1: Current supplier -->
+    <div class="panel blue">
+      <div class="panel-head">
+        <div class="panel-head-left">
+          <div class="step-num blue">1</div>
+          <div>
+            <h2>Your Current Supplier Details</h2>
+            <p>Enter your current bills and usage details</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div>
+          <label>Name <span class="req">*</span></label>
+          <input class="txt-input" id="custName" value="Vivek Basal">
+        </div>
+        <div>
+          <label>Address <span class="req">*</span></label>
+          <div class="addr-wrap">
+            <input class="txt-input" id="custAddress" value="12 Green Lane, Hatfield">
+            <button class="pin-btn" type="button" title="Find address" aria-label="Find address">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 21s7-6.4 7-12a7 7 0 10-14 0c0 5.6 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>
+            </button>
+          </div>
+        </div>
+        <div>
+          <label>Post Code <span class="req">*</span></label>
+          <input class="txt-input" id="custPostcode" value="AL10 0AB">
+        </div>
+      </div>
+
+      <div class="supplier-select">
+        <label>Current Supplier</label>
+        <select class="txt-input" id="custSupplier">
+          <option>British Gas</option>
+          <option>EDF Energy</option>
+          <option>E.ON Next</option>
+          <option>Octopus Energy</option>
+          <option>OVO Energy</option>
+          <option>Scottish Power</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="svc-list">
+        <div class="svc-row" data-row="gas">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="cur" data-svc="gas">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="#f97316"><path d="M12 2c1 4-4 5-4 9a4 4 0 008 0c0-1.5-.6-2.2-1.2-3 .3 2-.6 2.6-1.3 2.6-1 0-1.3-.8-1-1.8.4-1.4.9-2.8-.5-6.8z"/></svg></div>
+            <strong>Energy - Gas</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Unit Rate (p/kWh)</label><input type="number" step="0.01" min="0" value="6.85" data-side="cur" data-svc="gas" data-field="rate"></div>
+            <div class="fmini"><label>Annual Reading (kWh)</label><input type="number" min="0" value="12000" data-side="cur" data-svc="gas" data-field="usage"></div>
+            <div class="fmini"><label>Standing Charge (p/day)</label><input type="number" step="0.01" min="0" value="29.60" data-side="cur" data-svc="gas" data-field="standing"></div>
+          </div>
+        </div>
+
+        <div class="svc-row" data-row="elec">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="cur" data-svc="elec">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="#f5b301"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
+            <strong>Energy - Electricity</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Unit Rate (p/kWh)</label><input type="number" step="0.01" min="0" value="24.72" data-side="cur" data-svc="elec" data-field="rate"></div>
+            <div class="fmini"><label>Annual Reading (kWh)</label><input type="number" min="0" value="3800" data-side="cur" data-svc="elec" data-field="usage"></div>
+            <div class="fmini"><label>Standing Charge (p/day)</label><input type="number" step="0.01" min="0" value="53.35" data-side="cur" data-svc="elec" data-field="standing"></div>
+          </div>
+        </div>
+
+        <div class="svc-row" data-row="broadband">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="cur" data-svc="broadband">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2f9de0" stroke-width="2"><path d="M2 8.5a16 16 0 0120 0M5 12a11 11 0 0114 0M8.5 15.5a6 6 0 017 0" stroke-linecap="round"/><circle cx="12" cy="19" r="1.4" fill="#2f9de0" stroke="none"/></svg></div>
+            <strong>Broadband</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Monthly Cost (£)</label><input type="number" step="0.01" min="0" value="30.00" data-side="cur" data-svc="broadband" data-field="monthly"></div>
+          </div>
+        </div>
+
+        <div class="svc-row" data-row="mobile">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="cur" data-svc="mobile">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2" stroke-linecap="round"/></svg></div>
+            <strong>Mobile SIM</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Number of SIMs</label><input type="number" min="0" value="3" data-side="cur" data-svc="mobile" data-field="sims"></div>
+            <div class="fmini"><label>Monthly Cost per SIM (£)</label><input type="number" step="0.01" min="0" value="8.00" data-side="cur" data-svc="mobile" data-field="permonth"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2: UW -->
+    <div class="panel purple">
+      <div class="panel-head">
+        <div class="panel-head-left">
+          <div class="step-num purple">2</div>
+          <div>
+            <h2>Utility Warehouse (UW) Details</h2>
+            <p>Enter the UW rates and benefits</p>
+          </div>
+        </div>
+        <div class="mini-logo">
+          <svg viewBox="0 0 40 40" fill="none"><path d="M6 22V8h4v14a6 6 0 0012 0V8h4v14a10 10 0 01-20 0z" fill="#7c3aed"/><path d="M24 8h4v14a10 10 0 01-8.5 9.9A9.98 9.98 0 0024 22V8z" fill="#c026d3"/></svg>
+          <span>Utility<br>Warehouse</span>
+        </div>
+      </div>
+
+      <div class="tariff-select">
+        <label>UW Tariff Type</label>
+        <select class="txt-input" id="uwTariffType">
+          <option value="variable">Variable</option>
+          <option value="tracker">Tracker</option>
+          <option value="fixed">Fixed</option>
+        </select>
+      </div>
+
+      <div class="svc-list">
+        <div class="svc-row" data-row="gas">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="uw" data-svc="gas">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="#f97316"><path d="M12 2c1 4-4 5-4 9a4 4 0 008 0c0-1.5-.6-2.2-1.2-3 .3 2-.6 2.6-1.3 2.6-1 0-1.3-.8-1-1.8.4-1.4.9-2.8-.5-6.8z"/></svg></div>
+            <strong>Energy - Gas</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Unit Rate (p/kWh)</label><input type="number" step="0.001" min="0" value="7.259" data-side="uw" data-svc="gas" data-field="rate"></div>
+            <div class="fmini"><label>Annual Reading (kWh)</label><input type="number" min="0" value="12000" data-side="uw" data-svc="gas" data-field="usage"></div>
+            <div class="fmini"><label>Standing Charge (p/day)</label><input type="number" step="0.01" min="0" value="27.00" data-side="uw" data-svc="gas" data-field="standing"></div>
+          </div>
+        </div>
+
+        <div class="svc-row" data-row="elec">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="uw" data-svc="elec">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="#f5b301"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
+            <strong>Energy - Electricity</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Unit Rate (p/kWh)</label><input type="number" step="0.001" min="0" value="25.125" data-side="uw" data-svc="elec" data-field="rate"></div>
+            <div class="fmini"><label>Annual Reading (kWh)</label><input type="number" min="0" value="3800" data-side="uw" data-svc="elec" data-field="usage"></div>
+            <div class="fmini"><label>Standing Charge (p/day)</label><input type="number" step="0.01" min="0" value="48.00" data-side="uw" data-svc="elec" data-field="standing"></div>
+          </div>
+        </div>
+
+        <div class="svc-row bundle-row" data-row="bundle">
+          <div class="svc-check">
+            <input type="checkbox" id="bundleEnabled">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M9 15l6-6M9 9h.01M15 15h.01" stroke-linecap="round"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg></div>
+            <strong>UW Bundle Service Energy Price</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>UW Bundle Service Energy Price (£/month)</label><input type="number" step="0.01" min="0" value="116.67" id="bundlePrice"></div>
+            <div class="bundle-note">When enabled, this replaces the individual Gas + Electricity unit-rate charges above</div>
+          </div>
+        </div>
+
+        <div class="svc-row" data-row="broadband">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="uw" data-svc="broadband">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2f9de0" stroke-width="2"><path d="M2 8.5a16 16 0 0120 0M5 12a11 11 0 0114 0M8.5 15.5a6 6 0 017 0" stroke-linecap="round"/><circle cx="12" cy="19" r="1.4" fill="#2f9de0" stroke="none"/></svg></div>
+            <strong>Broadband</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Monthly Cost (£)</label><input type="number" step="0.01" min="0" value="24.00" data-side="uw" data-svc="broadband" data-field="monthly"></div>
+          </div>
+        </div>
+
+        <div class="svc-row" data-row="mobile">
+          <div class="svc-check">
+            <input type="checkbox" checked data-side="uw" data-svc="mobile">
+            <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2" stroke-linecap="round"/></svg></div>
+            <strong>Mobile SIM</strong>
+          </div>
+          <div class="svc-fields">
+            <div class="fmini"><label>Number of SIMs</label><input type="number" min="0" value="3" data-side="uw" data-svc="mobile" data-field="sims"></div>
+            <div class="fmini"><label>Monthly Cost per SIM (£)</label><input type="number" step="0.01" min="0" value="6.00" data-side="uw" data-svc="mobile" data-field="permonth"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="benefits">
+        <div class="benefits-title">
+          <svg viewBox="0 0 24 24" fill="#7c3aed"><path d="M12 2c1.3 0 2.4 1 2.4 2.3 0 .6-.2 1.1-.6 1.5h3.4c.8 0 1.4.6 1.4 1.4v2H5.4v-2c0-.8.6-1.4 1.4-1.4h3.4a2.1 2.1 0 01-.6-1.5C9.6 3 10.7 2 12 2z"/><path d="M4 9h16v11a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
+          UW Additional Benefits
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-label">
+            <svg viewBox="0 0 24 24" fill="#c026d3"><path d="M12 2c1.3 0 2.4 1 2.4 2.3 0 .6-.2 1.1-.6 1.5h3.4c.8 0 1.4.6 1.4 1.4v2H5.4v-2c0-.8.6-1.4 1.4-1.4h3.4a2.1 2.1 0 01-.6-1.5C9.6 3 10.7 2 12 2z"/><path d="M4 9h16v11a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
+            Loyalty Discount <span class="help" title="Ongoing discount applied to your UW bill">&#9432;</span>
+          </div>
+          <div class="benefit-input"><span>£</span><input type="number" step="0.01" min="0" value="9.00" id="loyaltyAmt"></div>
+          <select class="benefit-period" id="loyaltyPeriod"><option value="month">per month</option><option value="year">per year</option></select>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-label">
+            <svg viewBox="0 0 24 24" fill="#c026d3"><path d="M12 2c1.3 0 2.4 1 2.4 2.3 0 .6-.2 1.1-.6 1.5h3.4c.8 0 1.4.6 1.4 1.4v2H5.4v-2c0-.8.6-1.4 1.4-1.4h3.4a2.1 2.1 0 01-.6-1.5C9.6 3 10.7 2 12 2z"/><path d="M4 9h16v11a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>
+            Average Cashback <span class="help" title="Estimated average cashback earned via UW rewards">&#9432;</span>
+          </div>
+          <div class="benefit-input"><span>£</span><input type="number" step="0.01" min="0" value="12.00" id="cashbackAmt"></div>
+          <select class="benefit-period" id="cashbackPeriod"><option value="month">per month</option><option value="year">per year</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare button -->
+  <div class="compare-row">
+    <svg class="deco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h10M14 12l-4-4M14 12l-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button class="compare-btn" id="compareBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M16 15h0M8 19h2M12 19h2" stroke-linecap="round"/></svg>
+      Compare Now
+    </button>
+    <svg class="deco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12H10M10 12l4-4M10 12l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button class="reset-btn" id="resetBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 3v5h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Reset
+    </button>
+    <button class="reset-btn" id="printBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a1 1 0 01-1-1v-5a1 1 0 011-1h16a1 1 0 011 1v5a1 1 0 01-1 1h-2" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="14" width="12" height="7" rx="1"/></svg>
+      Print / Save PDF
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div class="results">
+    <div class="results-head">
+      <div class="results-head-left">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20V13" stroke-linecap="round"/></svg></div>
+        <div>
+          <h2>Comparison Results</h2>
+          <p>Here's how your current supplier compares with Utility Warehouse</p>
+        </div>
+      </div>
+      <div class="save-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 21h8M12 17v4M6 3h12l-1 6a5 5 0 01-10 0L6 3z"/><path d="M6 5H3a4 4 0 004 4M18 5h3a4 4 0 01-4 4"/></svg>
+        <div><strong id="saveHeadline">You could save £0 per year</strong><span>by switching to Utility Warehouse</span></div>
+      </div>
+    </div>
+
+    <div class="results-body">
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th class="num">Current Supplier<br>Annual Cost</th>
+              <th class="num">UW Annual Cost<br>(after discounts)</th>
+              <th class="num">Difference</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+
+      <div class="chart-card">
+        <h3>Annual Cost Comparison</h3>
+        <svg id="chart" viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <div class="side-col">
+        <div class="saving-box">
+          <div class="bag"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.4c0 3.1-6 1.6-6 4.6 0 1.4 1.3 2.5 3 2.5s3-1.1 3-2.5" stroke-linecap="round"/></svg></div>
+          <div class="label">Annual Saving</div>
+          <div class="amount" id="savingAmount">£0</div>
+          <div class="sub" id="savingSub">That's £0 per month or 0% lower cost</div>
+        </div>
+        <div class="tip-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C7 2 4 6 4 10c0 6 4 9 8 12 4-3 8-6 8-12 0-4-3-8-8-8z"/></svg>
+          <div>Save money<br>Simplify your bills<br>Join a more rewarding way to stay connected</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-copyright">&copy; 2026 Vivek Basal. All rights reserved. Prepared by Vivek Basal.</div>
+
+</div>
+
+<!-- Print-only A4 report -->
+<div class="print-only" id="printSummary">
+  <div class="p-header">
+    <div class="p-logo">
+      <svg viewBox="0 0 40 40" fill="none"><path d="M6 22V8h4v14a6 6 0 0012 0V8h4v14a10 10 0 01-20 0z" fill="#7c3aed"/><path d="M24 8h4v14a10 10 0 01-8.5 9.9A9.98 9.98 0 0024 22V8z" fill="#c026d3"/></svg>
+      <div><strong>Utility Warehouse</strong><span>Utility Cost Comparison Report</span></div>
+    </div>
+    <div class="p-headright">
+      <div class="p-tariff" id="pTariffBadge"></div>
+      <div class="p-date" id="pDate"></div>
+    </div>
+  </div>
+
+  <div class="p-customer" id="pCustomer"></div>
+
+  <h3>Rates &amp; Usage Summary</h3>
+  <table class="p-table" id="pRatesTable"></table>
+
+  <h3>Comparison Results</h3>
+  <table class="p-table" id="pResultsTable"></table>
+
+  <div class="p-savings" id="pSavings"></div>
+
+  <div class="p-chart" id="pChart"></div>
+
+  <div class="p-footer">
+    Independent estimate based on the figures entered above. Prices may vary &mdash; please confirm final tariff details with Utility Warehouse before switching.<br>
+    <span id="pCopyright">&copy; 2026 Vivek Basal. All rights reserved. Prepared by Vivek Basal.</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ICONS = {
+    gas: '<svg viewBox="0 0 24 24" fill="#f97316"><path d="M12 2c1 4-4 5-4 9a4 4 0 008 0c0-1.5-.6-2.2-1.2-3 .3 2-.6 2.6-1.3 2.6-1 0-1.3-.8-1-1.8.4-1.4.9-2.8-.5-6.8z"/></svg>',
+    elec: '<svg viewBox="0 0 24 24" fill="#f5b301"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>',
+    broadband: '<svg viewBox="0 0 24 24" fill="none" stroke="#2f9de0" stroke-width="2"><path d="M2 8.5a16 16 0 0120 0M5 12a11 11 0 0114 0M8.5 15.5a6 6 0 017 0" stroke-linecap="round"/><circle cx="12" cy="19" r="1.4" fill="#2f9de0" stroke="none"/></svg>',
+    mobile: '<svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2" stroke-linecap="round"/></svg>',
+    gift: '<svg viewBox="0 0 24 24" fill="#c026d3"><path d="M12 2c1.3 0 2.4 1 2.4 2.3 0 .6-.2 1.1-.6 1.5h3.4c.8 0 1.4.6 1.4 1.4v2H5.4v-2c0-.8.6-1.4 1.4-1.4h3.4a2.1 2.1 0 01-.6-1.5C9.6 3 10.7 2 12 2z"/><path d="M4 9h16v11a2 2 0 01-2 2H6a2 2 0 01-2-2V9z"/></svg>',
+    bundle: '<svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M9 15l6-6M9 9h.01M15 15h.01" stroke-linecap="round"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>'
+  };
+
+  const $ = sel => document.querySelector(sel);
+  const num = el => Math.max(0, parseFloat(el && el.value) || 0);
+  const gbp = n => (n < 0 ? '-£' : '£') + Math.round(Math.abs(n)).toLocaleString('en-GB');
+
+  function fieldsFor(side, svc){
+    return document.querySelectorAll(`[data-side="${side}"][data-svc="${svc}"][data-field]`);
+  }
+  function checkboxFor(side, svc){
+    return document.querySelector(`.svc-row [data-side="${side}"][data-svc="${svc}"]:not([data-field])`);
+  }
+
+  function serviceCost(side, svc){
+    const cb = checkboxFor(side, svc);
+    if (!cb || !cb.checked) return 0;
+    const fields = {};
+    fieldsFor(side, svc).forEach(f => fields[f.dataset.field] = num(f));
+    if (svc === 'gas' || svc === 'elec') return (fields.rate * fields.usage / 100) + (fields.standing * 365 / 100);
+    if (svc === 'broadband') return fields.monthly * 12;
+    if (svc === 'mobile') return fields.sims * fields.permonth * 12;
+    return 0;
+  }
+
+  function benefitAnnual(amtEl, periodEl){
+    const amt = num(amtEl);
+    return periodEl.value === 'month' ? amt * 12 : amt;
+  }
+
+  function toggleRowState(){
+    document.querySelectorAll('.svc-row').forEach(row => {
+      const cb = row.querySelector('input[type=checkbox]');
+      if (!cb) return;
+      const inputs = row.querySelectorAll('.fmini input');
+      inputs.forEach(i => i.disabled = !cb.checked);
+      row.classList.toggle('disabled', !cb.checked);
+    });
+
+    const bundleEnabled = $('#bundleEnabled').checked;
+    const uwGasCb = checkboxFor('uw', 'gas');
+    const uwElecCb = checkboxFor('uw', 'elec');
+    const useBundle = bundleEnabled && uwGasCb.checked && uwElecCb.checked;
+    document.querySelectorAll('.svc-row[data-row="gas"], .svc-row[data-row="elec"]').forEach(row => {
+      if (!row.querySelector('[data-side="uw"]')) return;
+      row.classList.toggle('bundled', useBundle);
+    });
+  }
+
+  function compute(){
+    const curGas = serviceCost('cur', 'gas');
+    const curElec = serviceCost('cur', 'elec');
+    const uwGasChecked = checkboxFor('uw', 'gas').checked;
+    const uwElecChecked = checkboxFor('uw', 'elec').checked;
+    const bundleEnabled = $('#bundleEnabled').checked;
+    const bundlePriceAnnual = num($('#bundlePrice')) * 12;
+    const useBundle = bundleEnabled && uwGasChecked && uwElecChecked;
+
+    const rows = [];
+    if (useBundle) {
+      rows.push({ id:'bundle', name:'UW Bundle Service Energy Price', cur: curGas + curElec, uw: bundlePriceAnnual, diff: bundlePriceAnnual - (curGas + curElec) });
+    } else {
+      const uwGas = serviceCost('uw', 'gas');
+      const uwElec = serviceCost('uw', 'elec');
+      rows.push({ id:'gas', name:'Energy - Gas', cur: curGas, uw: uwGas, diff: uwGas - curGas });
+      rows.push({ id:'elec', name:'Energy - Electricity', cur: curElec, uw: uwElec, diff: uwElec - curElec });
+    }
+    ['broadband','mobile'].forEach(id => {
+      const cur = serviceCost('cur', id);
+      const uw = serviceCost('uw', id);
+      const name = id === 'broadband' ? 'Broadband' : 'Mobile SIM (3)';
+      rows.push({ id, name, cur, uw, diff: uw - cur });
+    });
+
+    const loyalty = benefitAnnual($('#loyaltyAmt'), $('#loyaltyPeriod'));
+    const cashback = benefitAnnual($('#cashbackAmt'), $('#cashbackPeriod'));
+    rows.push({ id:'loyalty', name:'Loyalty Discount', cur:0, uw:-loyalty, diff:-loyalty, isDash:true });
+    rows.push({ id:'cashback', name:'Average Cashback', cur:0, uw:-cashback, diff:-cashback, isDash:true });
+
+    const curTotal = rows.reduce((a,r) => a + (r.isDash ? 0 : r.cur), 0);
+    const uwTotal = rows.reduce((a,r) => a + r.uw, 0);
+
+    return { rows, curTotal, uwTotal, diffTotal: uwTotal - curTotal };
+  }
+
+  function renderTable(data){
+    const body = $('#resultsBody');
+    body.innerHTML = data.rows.map(r => {
+      const diffClass = r.diff < 0 ? 'neg' : (r.diff > 0 ? 'pos' : 'zero');
+      const curLabel = r.isDash ? '&ndash;' : gbp(r.cur);
+      const icon = ICONS[r.id] || ICONS.gift;
+      return `<tr>
+        <td><div class="svc-cell">${icon}${r.name}</div></td>
+        <td class="num">${curLabel}</td>
+        <td class="num">${gbp(r.uw)}</td>
+        <td class="num diff ${diffClass}">${r.diff === 0 ? '&ndash;' : gbp(r.diff)}</td>
+      </tr>`;
+    }).join('') + `
+      <tr class="total-row">
+        <td>Total (Annual)</td>
+        <td class="num">${gbp(data.curTotal)}</td>
+        <td class="num">${gbp(data.uwTotal)}</td>
+        <td class="num">${gbp(data.diffTotal)}</td>
+      </tr>`;
+  }
+
+  function renderChart(data){
+    const chart = $('#chart');
+    const W = 340, H = 300;
+    const padL = 52, padR = 14, padT = 20, padB = 34;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+    const maxVal = Math.max(data.curTotal, data.uwTotal, 1) * 1.18;
+    const steps = 6;
+    let gridSvg = '';
+    for(let i=0;i<=steps;i++){
+      const val = maxVal * i / steps;
+      const y = padT + chartH - (val / maxVal) * chartH;
+      gridSvg += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#eceef2" stroke-width="1"/>`;
+      gridSvg += `<text x="${padL-8}" y="${y+4}" font-size="9.5" fill="#6b7280" text-anchor="end">£${Math.round(val).toLocaleString('en-GB')}</text>`;
+    }
+    const bars = [
+      { label:'Current Supplier', val:data.curTotal, color:'#9ca3af' },
+      { label:'Utility Warehouse', val:data.uwTotal, color:'#7c3aed' }
+    ];
+    const barGap = 40;
+    const barW = (chartW - barGap) / 2;
+    let barsSvg = '';
+    bars.forEach((b,i) => {
+      const barH = (b.val / maxVal) * chartH;
+      const x = padL + i * (barW + barGap);
+      const y = padT + chartH - barH;
+      barsSvg += `
+        <text x="${x+barW/2}" y="${y-8}" font-size="13" font-weight="800" fill="#1e1b2e" text-anchor="middle">${gbp(b.val)}</text>
+        <rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="${b.color}"/>
+        <text x="${x+barW/2}" y="${H-padB+18}" font-size="10.5" fill="#1e1b2e" text-anchor="middle" font-weight="600">${b.label}</text>`;
+    });
+    chart.innerHTML = gridSvg + barsSvg;
+  }
+
+  function renderSavings(data){
+    const saving = Math.max(0, data.curTotal - data.uwTotal);
+    const pct = data.curTotal > 0 ? (saving / data.curTotal * 100) : 0;
+    $('#saveHeadline').textContent = `You could save ${gbp(saving)} per year`;
+    $('#savingAmount').textContent = gbp(saving);
+    $('#savingSub').textContent = `That's ${gbp(saving/12)} per month or ${pct.toFixed(0)}% lower cost`;
+  }
+
+  const TARIFF_RATES = {
+    variable: { elec:25.125, gas:7.259, elecStanding:44.849, gasStanding:21.852 },
+    tracker:  { elec:24.725, gas:6.839, elecStanding:48.636, gasStanding:17.745 },
+    fixed:    { elec:27.315, gas:8.36,  elecStanding:50.617, gasStanding:18.442 }
+  };
+
+  function applyTariff(){
+    const rates = TARIFF_RATES[$('#uwTariffType').value];
+    if (!rates) return;
+    fieldsFor('uw','elec').forEach(f => {
+      if (f.dataset.field === 'rate') f.value = rates.elec;
+      if (f.dataset.field === 'standing') f.value = rates.elecStanding;
+    });
+    fieldsFor('uw','gas').forEach(f => {
+      if (f.dataset.field === 'rate') f.value = rates.gas;
+      if (f.dataset.field === 'standing') f.value = rates.gasStanding;
+    });
+  }
+
+  function syncUsage(svc){
+    const curField = [...fieldsFor('cur', svc)].find(f => f.dataset.field === 'usage');
+    const uwField = [...fieldsFor('uw', svc)].find(f => f.dataset.field === 'usage');
+    if (curField && uwField) uwField.value = curField.value;
+  }
+
+  function update(){
+    toggleRowState();
+    const data = compute();
+    renderTable(data);
+    renderChart(data);
+    renderSavings(data);
+  }
+
+  ['gas','elec'].forEach(svc => {
+    const curField = [...fieldsFor('cur', svc)].find(f => f.dataset.field === 'usage');
+    if (curField) curField.addEventListener('input', () => syncUsage(svc));
+  });
+
+  function resetAll(){
+    document.querySelectorAll('input').forEach(el => {
+      if (el.type === 'checkbox') el.checked = el.defaultChecked;
+      else el.value = el.defaultValue;
+    });
+    document.querySelectorAll('select').forEach(sel => {
+      Array.from(sel.options).forEach(opt => { opt.selected = opt.defaultSelected; });
+    });
+    update();
+  }
+
+  function fieldVal(side, svc, field){
+    const f = [...fieldsFor(side, svc)].find(x => x.dataset.field === field);
+    return f ? f.value : '';
+  }
+
+  function buildPrintReport(){
+    const data = compute();
+    const bundleOn = $('#bundleEnabled').checked;
+
+    $('#pDate').textContent = 'Generated ' + new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+    $('#pTariffBadge').textContent = 'UW Tariff Type: ' + $('#uwTariffType').selectedOptions[0].text;
+    $('#pCustomer').innerHTML = `<strong>${$('#custName').value || '-'}</strong><br>${$('#custAddress').value || '-'}, ${$('#custPostcode').value || '-'}<br>Current Supplier: ${$('#custSupplier').value} &nbsp;|&nbsp; UW Tariff: ${$('#uwTariffType').selectedOptions[0].text}`;
+
+    let ratesRows = `<tr><th>Service</th><th>Current Supplier</th><th>Utility Warehouse</th></tr>`;
+    ratesRows += `<tr><td>Energy - Gas</td><td>${fieldVal('cur','gas','rate')}p/kWh, ${fieldVal('cur','gas','usage')} kWh/yr, ${fieldVal('cur','gas','standing')}p/day standing</td><td>${bundleOn ? 'Included in Bundle Price' : fieldVal('uw','gas','rate')+'p/kWh, '+fieldVal('uw','gas','usage')+' kWh/yr, '+fieldVal('uw','gas','standing')+'p/day standing'}</td></tr>`;
+    ratesRows += `<tr><td>Energy - Electricity</td><td>${fieldVal('cur','elec','rate')}p/kWh, ${fieldVal('cur','elec','usage')} kWh/yr, ${fieldVal('cur','elec','standing')}p/day standing</td><td>${bundleOn ? 'Included in Bundle Price' : fieldVal('uw','elec','rate')+'p/kWh, '+fieldVal('uw','elec','usage')+' kWh/yr, '+fieldVal('uw','elec','standing')+'p/day standing'}</td></tr>`;
+    if (bundleOn) {
+      ratesRows += `<tr><td>UW Bundle Service Energy Price</td><td>&ndash;</td><td>£${$('#bundlePrice').value}/month</td></tr>`;
+    }
+    ratesRows += `<tr><td>Broadband</td><td>£${fieldVal('cur','broadband','monthly')}/month</td><td>£${fieldVal('uw','broadband','monthly')}/month</td></tr>`;
+    ratesRows += `<tr><td>Mobile SIM</td><td>${fieldVal('cur','mobile','sims')} SIM(s) x £${fieldVal('cur','mobile','permonth')}/month</td><td>${fieldVal('uw','mobile','sims')} SIM(s) x £${fieldVal('uw','mobile','permonth')}/month</td></tr>`;
+    ratesRows += `<tr><td>Loyalty Discount</td><td>&ndash;</td><td>£${$('#loyaltyAmt').value} ${$('#loyaltyPeriod').value}</td></tr>`;
+    ratesRows += `<tr><td>Average Cashback</td><td>&ndash;</td><td>£${$('#cashbackAmt').value} ${$('#cashbackPeriod').value}</td></tr>`;
+    $('#pRatesTable').innerHTML = ratesRows;
+
+    let resultsRows = `<tr><th>Service</th><th class="num">Current Supplier</th><th class="num">UW (after discounts)</th><th class="num">Difference</th></tr>`;
+    data.rows.forEach(r => {
+      const curLabel = r.isDash ? '&ndash;' : gbp(r.cur);
+      resultsRows += `<tr><td>${r.name}</td><td class="num">${curLabel}</td><td class="num">${gbp(r.uw)}</td><td class="num">${r.diff === 0 ? '&ndash;' : gbp(r.diff)}</td></tr>`;
+    });
+    resultsRows += `<tr class="p-total"><td>Total (Annual)</td><td class="num">${gbp(data.curTotal)}</td><td class="num">${gbp(data.uwTotal)}</td><td class="num">${gbp(data.diffTotal)}</td></tr>`;
+    $('#pResultsTable').innerHTML = resultsRows;
+
+    const saving = Math.max(0, data.curTotal - data.uwTotal);
+    const pct = data.curTotal > 0 ? (saving / data.curTotal * 100) : 0;
+    $('#pSavings').textContent = `Estimated Annual Saving: ${gbp(saving)} (${gbp(saving/12)} per month, ${pct.toFixed(0)}% lower cost)`;
+
+    $('#pChart').innerHTML = document.getElementById('chart').outerHTML;
+  }
+
+  $('#compareBtn').addEventListener('click', update);
+  $('#resetBtn').addEventListener('click', resetAll);
+  $('#printBtn').addEventListener('click', () => { buildPrintReport(); window.print(); });
+  window.addEventListener('beforeprint', buildPrintReport);
+  document.querySelectorAll('.svc-fields input, .benefit-input input, .benefit-period, .svc-check input[type=checkbox]')
+    .forEach(el => el.addEventListener('input', update));
+  $('#uwTariffType').addEventListener('change', () => { applyTariff(); update(); });
+
+  applyTariff();
+  syncUsage('gas');
+  syncUsage('elec');
+  update();
+})();
+</script>
+</body>
+</html>
